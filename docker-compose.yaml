@@ -1,0 +1,37 @@
+
+
+services:
+  evidently:
+    build: .
+    container_name: evidently_monitor
+    volumes:
+      - ./data:/app/data
+      - ./dashboards:/app/dashboards
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    container_name: monitoring_pg
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: monitoring
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  grafana:
+    image: grafana/grafana
+    container_name: monitoring_grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - postgres
+
+volumes:
+  pg_data:
+  grafana_data:
